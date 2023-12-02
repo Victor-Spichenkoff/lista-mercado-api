@@ -4,11 +4,13 @@ const prisma = require('../config/prisma')
 module.exports = (app) => {
     const getAllById = async (req, res) => {
         const id = Number(req.params.id)
-        console.log(id)
 
         const products = await prisma.product.findMany({where: {id_purchase:id}})
+
+        console.log('get: ' + id)
+        console.log(products)
         
-        res.send(products)
+        res.status(200).send(products)
     }
 
     const createProduct = async (req, res) => {
@@ -31,11 +33,11 @@ module.exports = (app) => {
             if(!affected) {
                 res.send('Não foi possível salvar')
             } else {
-                res.status(204)
+                res.sendStatus(204)
             }
         } catch(e) {
             console.log('erro: '+e)
-            res.send('Não foi possível salvar: '+ e).status(500)
+            res.status(500).send('Não foi possível salvar: '+ e)
         }
     }
 
@@ -67,22 +69,26 @@ module.exports = (app) => {
     // }
     const updateProduct = async (req, res) => {//primeira vez foi direto!!!!!!!
         const product = {...req.body}
-        console.log(product)
-        // product.name = product.name?? 'Não Informado'
-        // product.price = product.price?? 1
-        // product.units = product.units?? 1
+        // console.log(product)
+        product.name = product.name?? 'Não Informado'
+        product.price = product.price?? 1
+        product.units = product.units?? 1
         try{
             await prisma.product.update({
                 where: {id_purchase: product.id_purchase},
                 where: {id: product.id},
-                data: {name: product.name,
-                price: parseFloat(product.price),
-                units: Number(product.units),
-                added: product.added
+                data: {
+                    name: product.name,
+                    price: parseFloat(product.price),
+                    units: Number(product.units),
+                    added: product.added
             }
             })
+
+            console.log("Após atualização: ")
+            console.log(product)
         } catch(e) {
-            return res.status(500)
+            return res.sendStatus(500)
         }
     }
 
@@ -97,7 +103,7 @@ module.exports = (app) => {
                     id: Number(id)
                 }})
         } catch(e) {
-            res.status(500)
+            res.sendStatus(500)
         }
     }
 
