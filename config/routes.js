@@ -1,4 +1,6 @@
 module.exports = app => {
+    app.get('/teste', (req, res) => res.send('Funcionando'))
+
     app.delete('/products/delete/:id', app.functions.products.deletar)
     
     app.put('/products/updateOne', app.functions.products.updateProduct)
